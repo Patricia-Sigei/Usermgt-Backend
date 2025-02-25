@@ -14,7 +14,7 @@ def create_user():
     email = data.get('email')
     phone_number = data.get('phone_number')
     password = bcrypt.generate_password_hash(data.get('password')).decode('utf-8')
-    permissions = data.get('permissions', [])  # Expecting a list of permission strings
+    permissions = data.get('permissions', [])  
     
     new_user = User(name=name, email=email, phone_number=phone_number, password=password, permissions=permissions)
     db.session.add(new_user)
