@@ -22,12 +22,12 @@ from schemas import ma
 db.init_app(app)
 ma.init_app(app)
 
-# Import and register blueprints
+# Importing and registering blueprints
 from routes.user import user_bp
 
 app.register_blueprint(user_bp)
 
-# Function to manually create PostgreSQL tables
+# Manually creating tables
 def create_tables():
     try:
         connection = psycopg2.connect(Config.SQLALCHEMY_DATABASE_URI)
@@ -60,7 +60,7 @@ def create_tables():
         cursor.close()
         connection.close()
 
-# Run table creation in the app context
+# Creating tables
 with app.app_context():
     create_tables()
 

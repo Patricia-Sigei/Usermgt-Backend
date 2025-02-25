@@ -23,7 +23,7 @@ def create_user():
     return jsonify({"message": "User created successfully", "user": new_user.to_dict()}), 201
 
 # Get all users
-@user_bp.route('/', methods=['GET'])
+@user_bp.route('/all', methods=['GET'])
 def get_users():
     users = User.query.all()
     return jsonify([user.to_dict() for user in users]), 200
