@@ -7,16 +7,16 @@ from config import Config
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 
-# Load environment variables from .env file
-load_dotenv()
-
+# Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Initialize extensions
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-# Import routes (to avoid circular imports)
+# Import and register blueprints
 from routes.user_routes import user_bp
 from routes.permission_routes import permission_bp
 
@@ -25,8 +25,7 @@ app.register_blueprint(permission_bp)
 
 # Connect to PostgreSQL and manually create tables
 def create_tables():
-    db_url = os.getenv("DATABASE_URL")
-    connection = psycopg2.connect(db_url)
+    connection = psycopg2.connect(Config.SQLALCHEMY_DATABASE_URI)
     cursor = connection.cursor()
     
     sql_commands = [
@@ -63,8 +62,9 @@ def create_tables():
     cursor.close()
     connection.close()
 
+# Run table creation in the app context
 with app.app_context():
-    create_tables()  
+    create_tables()
 
 if __name__ == "__main__":
     app.run(debug=True)
