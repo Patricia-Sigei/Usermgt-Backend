@@ -1,66 +1,64 @@
 import os
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
 import psycopg2
-from config import Config
+from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
+from config import Config
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
 # Initialize extensions
-db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
+# Import database and schema serializer (db is already initialized in models/__init__.py )
+from models import db  
+from schemas import ma
+
+# Initialize database and schema serializer
+db.init_app(app)
+ma.init_app(app)
+
 # Import and register blueprints
-from routes.user_routes import user_bp
-from routes.permission_routes import permission_bp
+from routes.user import user_bp
 
 app.register_blueprint(user_bp)
-app.register_blueprint(permission_bp)
 
-# Connect to PostgreSQL and manually create tables
+# Function to manually create PostgreSQL tables
 def create_tables():
-    connection = psycopg2.connect(Config.SQLALCHEMY_DATABASE_URI)
-    cursor = connection.cursor()
-    
-    sql_commands = [
-        """
-        CREATE TABLE IF NOT EXISTS permission (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(50) UNIQUE NOT NULL
-        )
-        """,
-        """
-        CREATE TABLE IF NOT EXISTS "user" (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            phone_number VARCHAR(20) UNIQUE NOT NULL,
-            password VARCHAR(120) NOT NULL
-        )
-        """,
-        """
-        CREATE TABLE IF NOT EXISTS user_permission (
-            id SERIAL PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            permission_id INTEGER NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
-            FOREIGN KEY (permission_id) REFERENCES permission(id) ON DELETE CASCADE
-        )
-        """
-    ]
+    try:
+        connection = psycopg2.connect(Config.SQLALCHEMY_DATABASE_URI)
+        cursor = connection.cursor()
 
-    for command in sql_commands:
-        cursor.execute(command)
-    
-    connection.commit()
-    cursor.close()
-    connection.close()
+        sql_commands = [
+            """
+            CREATE TABLE IF NOT EXISTS "user" (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                phone_number VARCHAR(20) UNIQUE NOT NULL,
+                password VARCHAR(120) NOT NULL,
+                is_admin BOOLEAN DEFAULT FALSE,
+                permissions TEXT[] DEFAULT ARRAY[]::TEXT[]
+            )
+            """
+        ]
+
+        for command in sql_commands:
+            cursor.execute(command)
+
+        connection.commit()
+        print("Tables created successfully!")
+
+    except Exception as e:
+        print(f"Error creating tables: {e}")
+
+    finally:
+        cursor.close()
+        connection.close()
 
 # Run table creation in the app context
 with app.app_context():

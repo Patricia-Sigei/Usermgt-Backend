@@ -4,6 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+dotenv = "*"
+flask-bcrypt = "*"
+flask-jwt-extended = "*"
 
 [dev-packages]
 
