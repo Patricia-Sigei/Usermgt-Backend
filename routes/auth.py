@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required
 from models import db, User
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 
 auth_bp = Blueprint("auth", __name__)
-
+# Login routes that makes use of JWT
 @auth_bp.route("/login", methods=["POST"])
 @jwt_required()
 def login():
@@ -19,9 +19,10 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password, password):
         return jsonify({"error": "Invalid name or password"}), 401
     
-    access_token = create_access_token(identity=user.id, expires_delta=False)
+    access_token = create_access_token(identity=user.id)
     return jsonify({"access_token": access_token, "message": "Login successful"}), 200
 
+# route to reset password
 @auth_bp.route("/reset-password", methods=["POST"])
 @jwt_required()
 def reset_password():

@@ -3,10 +3,9 @@ import psycopg2
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
-from dotenv import load_dotenv
 from config import Config
 
-# Initialize Flask app
+# Initializing Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -18,7 +17,7 @@ jwt = JWTManager(app)
 from models import db  
 from schemas import ma
 
-# Initialize database and schema serializer
+# Initialize the database and schema serializer
 db.init_app(app)
 ma.init_app(app)
 
@@ -28,7 +27,7 @@ from routes.user import user_bp
 app.register_blueprint(user_bp)
 
 from routes.auth import auth_bp
-app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(auth_bp)
 
 
 # Manually creating tables
