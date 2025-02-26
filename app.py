@@ -27,6 +27,10 @@ from routes.user import user_bp
 
 app.register_blueprint(user_bp)
 
+from routes.auth import auth_bp
+app.register_blueprint(auth_bp, url_prefix="/auth")
+
+
 # Manually creating tables
 def create_tables():
     try:
