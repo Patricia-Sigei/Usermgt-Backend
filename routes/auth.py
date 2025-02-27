@@ -24,7 +24,6 @@ def login():
 
 # route to reset password
 @auth_bp.route("/reset-password", methods=["POST"])
-@jwt_required()
 def reset_password():
     data = request.get_json()
     email = data.get("email")
