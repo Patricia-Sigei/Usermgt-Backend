@@ -29,7 +29,7 @@ app.register_blueprint(user_bp)
 from routes.auth import auth_bp
 app.register_blueprint(auth_bp)
 
-
+#comment test webhook
 # Manually creating tables
 def create_tables():
     try:
