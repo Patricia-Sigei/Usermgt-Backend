@@ -14,12 +14,21 @@ def login():
     password = data.get("password")
 
     user = User.query.filter_by(name=name).first()
-    
-    if not user or not bcrypt.check_password_hash(user.password, password):
+
+    if not user:
+        print("User not found")
         return jsonify({"error": "Invalid name or password"}), 401
-    
+
+    print(f"Stored Hash: {user.password}")
+    print(f"Input Password: {password}")
+
+    if not bcrypt.check_password_hash(user.password, password):
+        print("Password check failed")
+        return jsonify({"error": "Invalid name or password"}), 401
+
     access_token = create_access_token(identity=user.id)
     return jsonify({"access_token": access_token, "message": "Login successful"}), 200
+
 
 # route to reset password
 @auth_bp.route("/reset-password", methods=["POST"])
