@@ -23,11 +23,11 @@ ma.init_app(app)
 
 # Importing and registering blueprints
 from routes.user import user_bp
-
-app.register_blueprint(user_bp)
-
 from routes.auth import auth_bp
-app.register_blueprint(auth_bp)
+
+# Register blueprints with URL prefixes
+app.register_blueprint(user_bp, url_prefix="/users")  
+app.register_blueprint(auth_bp, url_prefix="/auth") 
 
 #comment test webhook
 # Manually creating tables
