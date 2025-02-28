@@ -8,7 +8,6 @@ bcrypt = Bcrypt()
 auth_bp = Blueprint("auth", __name__)
 # Login routes that makes use of JWT
 @auth_bp.route("/login", methods=["POST"])
-@jwt_required()
 def login():
     data = request.get_json()
     name = data.get("name")
