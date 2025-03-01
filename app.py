@@ -1,51 +1,51 @@
-import os
 import psycopg2
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from config import Config
+from models import db
+from schemas import ma
+from routes.user import user_bp
+from routes.auth import auth_bp
 
-# Initializing Flask app
+# Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
 # Initialize extensions
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-
-# Import database and schema serializer (db is already initialized in models/__init__.py )
-from models import db  
-from schemas import ma
-
-# Initialize the database and schema serializer
 db.init_app(app)
 ma.init_app(app)
 
-# Importing and registering blueprints
-from routes.user import user_bp
-from routes.auth import auth_bp
+# Register blueprints
+app.register_blueprint(user_bp, url_prefix="/users")
+app.register_blueprint(auth_bp, url_prefix="/auth")
 
-# Register blueprints with URL prefixes
-app.register_blueprint(user_bp, url_prefix="/users")  
-app.register_blueprint(auth_bp, url_prefix="/auth") 
-
-#comment test webhook
-# Manually creating tables
+# Function to create tables
 def create_tables():
     try:
         connection = psycopg2.connect(Config.SQLALCHEMY_DATABASE_URI)
         cursor = connection.cursor()
 
         sql_commands = [
+            # deleting the old table
+            """DROP TABLE IF EXISTS "user", roles CASCADE""",  
             """
-            CREATE TABLE IF NOT EXISTS "user" (
+            CREATE TABLE roles (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(50) UNIQUE NOT NULL,
+                permissions TEXT[] DEFAULT ARRAY[]::TEXT[]
+            )
+            """,
+            """
+            CREATE TABLE "user" (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
                 phone_number VARCHAR(20) UNIQUE NOT NULL,
-                password VARCHAR(120) NOT NULL,
-                is_admin BOOLEAN DEFAULT FALSE,
-                permissions TEXT[] DEFAULT ARRAY[]::TEXT[]
+                password_hash VARCHAR(120) NOT NULL,
+                role_id INTEGER REFERENCES roles(id) ON DELETE SET NULL
             )
             """
         ]
@@ -63,9 +63,9 @@ def create_tables():
         cursor.close()
         connection.close()
 
-# Creating tables
+# Create tables on app start
 with app.app_context():
     create_tables()
 
 if __name__ == "__main__":
-    app.run(debug=True,host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")
