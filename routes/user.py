@@ -3,19 +3,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, User, Role
 from schemas.user import user_schema, users_schema
 # from utils.admin import admin_required
-from app import bcrypt  
+from flask_bcrypt import bcrypt
 
 
 user_bp = Blueprint("users", __name__)
-
-
-from flask import Blueprint, request, jsonify
-from models import db, User, Role
-
-
-
-user_bp = Blueprint("user_bp", __name__)
-
 
 # Create a new user (Admin-only)
 @user_bp.route("/create", methods=["POST"])

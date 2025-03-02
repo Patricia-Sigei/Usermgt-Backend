@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_bcrypt import Bcrypt  # ✅ Import correctly
+from flask_bcrypt import Bcrypt  
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config import Config
@@ -7,6 +7,7 @@ from models import db
 from schemas import ma
 from routes.user import user_bp
 from routes.auth import auth_bp
+from routes.role import role_bp
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -24,6 +25,7 @@ migrate = Migrate(app, db)
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix="/users")
 app.register_blueprint(auth_bp, url_prefix="/auth")
+app.register_blueprint(role_bp, url_prefix="/roles")
 
 # Create tables using Flask-Migrate
 with app.app_context():
