@@ -1,5 +1,5 @@
 from models import db
-from sqlalchemy import Boolean, ARRAY
+from .role import Role  
 
 class User(db.Model):
     __tablename__ = "user"  
@@ -9,10 +9,10 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    is_admin = db.Column(Boolean, default=False)
-    permissions = db.Column(ARRAY(db.String), default=[])
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
 
-    # For logging
+    role = db.relationship("Role", back_populates="users")  
+
     def __repr__(self):
         return f"<User {self.name}>"
     
@@ -22,6 +22,5 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "phone_number": self.phone_number,
-            "is_admin": self.is_admin,
-            "permissions": self.permissions
+            "role": self.role.name if self.role else None
         }
