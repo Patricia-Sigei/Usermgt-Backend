@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    # Flask Secret Key 
-    SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     
-    # PostgreSQL Database Configuration
+    SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     DB_CONFIG = {
         "dbname": os.getenv("POSTGRES_DB"),
         "user": os.getenv("POSTGRES_USER"),
