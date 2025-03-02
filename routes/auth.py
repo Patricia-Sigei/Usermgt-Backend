@@ -11,15 +11,23 @@ auth_bp = Blueprint("auth", __name__)
 def login():
     data = request.get_json()
     email = data.get("email")
-    password = data.get("password")
+    password = data.get("password")  # User enters plain text password
 
     user = User.query.filter_by(email=email).first()
 
-    if not user or not bcrypt.check_password_hash(user.password, password):
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    print(f"Stored Hash: {user.password_hash}")  # Debugging
+    print(f"Entered Password: {password}")  # Debugging
+
+    # Verify password using bcrypt
+    if not bcrypt.check_password_hash(user.password_hash, password):
         return jsonify({"error": "Invalid email or password"}), 401
 
     access_token = create_access_token(identity=user.id)
     return jsonify({"access_token": access_token, "message": "Login successful"}), 200
+
 
 # Password reset (requires authentication)
 @auth_bp.route("/reset-password", methods=["POST"])
@@ -35,7 +43,7 @@ def reset_password():
         return jsonify({"error": "User not found"}), 404
 
     hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
-    user.password = hashed_password
+    user.password_hash = hashed_password 
     db.session.commit()
 
     return jsonify({"message": "Password reset successful"}), 200

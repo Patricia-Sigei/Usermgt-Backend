@@ -4,78 +4,73 @@ from models import db, User, Role
 from schemas.user import user_schema, users_schema
 
 bcrypt = Bcrypt()
-
 user_bp = Blueprint("users", __name__)
 
-# Create a new user (to add jwt later)
+# Create a new user
 @user_bp.route("/create", methods=["POST"])
 def create_user():
     data = request.get_json()
-    
-    if not data:
-        return jsonify({"error": "Invalid JSON or missing Content-Type header"}), 400
-
-    print("Received Data:", data)  # Debugging line
-
     name = data.get("name")
     email = data.get("email")
     phone_number = data.get("phone_number")
-    password_hash = data.get("password_hash")
+    password = data.get("password")
     role_id = data.get("role_id")
 
-    if not all([name, email, phone_number, password_hash, role_id]):
-        return jsonify({"error": "All fields are required", "received_data": data}), 400  # Show received data for debugging
+    missing_fields = [field for field in ["name", "email", "phone_number", "password", "role_id"] if not data.get(field)]
+    if missing_fields:
+      return jsonify({"error": "Missing required fields", "missing": missing_fields}), 400
 
+    # if not all([name, email, phone_number, password, role_id]):
+    #     return jsonify({"error": "All fields are required"}), 400
+    
     existing_user = User.query.filter((User.email == email) | (User.phone_number == phone_number)).first()
     if existing_user:
         return jsonify({"error": "Email or phone number already exists"}), 409
 
-    hashed_password = bcrypt.generate_password_hash(password_hash).decode("utf-8")
+    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
     new_user = User(
         name=name, 
         email=email, 
         phone_number=phone_number, 
-        password_hash=hashed_password, 
+        password=hashed_password, 
         role_id=role_id
     )
     
     db.session.add(new_user)
     db.session.commit()
-
     return jsonify(user_schema.dump(new_user)), 201
 
-# Get all users (No auth for now)
+# Get all users
 @user_bp.route("/all", methods=["GET"])
 def get_users():
     users = User.query.all()
     return jsonify(users_schema.dump(users)), 200
 
-# Get a single user by ID (No auth for now)
+# Get a single user by ID
 @user_bp.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
     return jsonify(user_schema.dump(user)), 200
 
-# Update user details (No auth for now)
+# Update user details
 @user_bp.route("/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
     data = request.get_json()
-
+    
     user.name = data.get("name", user.name)
     user.email = data.get("email", user.email)
     user.phone_number = data.get("phone_number", user.phone_number)
+    user.password = bcrypt.generate_password_hash(data.get("password", user.password)).decode("utf-8")
     user.role_id = data.get("role_id", user.role_id)
-
+    
     db.session.commit()
     return jsonify(user_schema.dump(user)), 200
 
-# Delete a user (No auth for now)
+# Delete a user
 @user_bp.route("/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
-    
     db.session.delete(user)
     db.session.commit()
-    
     return jsonify({"message": "User deleted successfully"}), 200
