@@ -10,8 +10,13 @@ def create_role():
     data = request.get_json()
     
     # Validate request data
-    if not data.get("name") or not isinstance(data.get("permissions", []), list):
+    if not data or not data.get("name") or not isinstance(data.get("permissions", []), list):
         return jsonify({"error": "Invalid input"}), 400
+
+    # Check if role already exists
+    existing_role = Role.query.filter_by(name=data["name"]).first()
+    if existing_role:
+        return jsonify({"error": "Role already exists"}), 409
 
     # Create a new role
     new_role = Role(
@@ -30,6 +35,14 @@ def get_roles():
     roles = Role.query.all()
     return jsonify([role.to_dict() for role in roles]), 200
 
+# Route to Get a Single Role by ID
+@role_bp.route("/roles/<int:role_id>", methods=["GET"])
+def get_role(role_id):
+    role = Role.query.get(role_id)
+    if not role:
+        return jsonify({"error": "Role not found"}), 404
+    return jsonify(role.to_dict()), 200
+
 # Route to Update Permissions for a Role
 @role_bp.route("/roles/<int:role_id>/permissions", methods=["PUT"])
 def update_role_permissions(role_id):
@@ -41,7 +54,7 @@ def update_role_permissions(role_id):
     if not isinstance(data.get("permissions", []), list):
         return jsonify({"error": "Invalid permissions format"}), 400
 
-    role.permissions = data["permissions"]
+    role.permissions = list(set(data["permissions"]))  # Ensure no duplicates
     db.session.commit()
 
     return jsonify({"message": "Permissions updated", "role": role.to_dict()}), 200
@@ -61,6 +74,7 @@ def add_permission(role_id):
 
     if permission not in role.permissions:
         role.permissions.append(permission)
+        role.permissions = list(set(role.permissions))  # Remove duplicates
         db.session.commit()
 
     return jsonify({"message": "Permission added", "role": role.to_dict()}), 200
@@ -83,3 +97,15 @@ def remove_permission(role_id):
         db.session.commit()
 
     return jsonify({"message": "Permission removed", "role": role.to_dict()}), 200
+
+# Route to Delete a Role
+@role_bp.route("/roles/<int:role_id>", methods=["DELETE"])
+def delete_role(role_id):
+    role = Role.query.get(role_id)
+    if not role:
+        return jsonify({"error": "Role not found"}), 404
+
+    db.session.delete(role)
+    db.session.commit()
+
+    return jsonify({"message": "Role deleted successfully"}), 200
