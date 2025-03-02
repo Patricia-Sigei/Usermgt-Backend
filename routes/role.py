@@ -4,21 +4,18 @@ from models.role import Role
 
 role_bp = Blueprint("role_bp", __name__)
 
-# Route to Add a New Role with Permissions
+# Route to Add a New role and its permissions
 @role_bp.route("/roles", methods=["POST"])
 def create_role():
     data = request.get_json()
     
-    # Validate request data
     if not data or not data.get("name") or not isinstance(data.get("permissions", []), list):
         return jsonify({"error": "Invalid input"}), 400
 
-    # Check if role already exists
     existing_role = Role.query.filter_by(name=data["name"]).first()
     if existing_role:
         return jsonify({"error": "Role already exists"}), 409
 
-    # Create a new role
     new_role = Role(
         name=data["name"],
         permissions=data["permissions"]
@@ -54,7 +51,7 @@ def update_role_permissions(role_id):
     if not isinstance(data.get("permissions", []), list):
         return jsonify({"error": "Invalid permissions format"}), 400
 
-    role.permissions = list(set(data["permissions"]))  # Ensure no duplicates
+    role.permissions = list(set(data["permissions"])) 
     db.session.commit()
 
     return jsonify({"message": "Permissions updated", "role": role.to_dict()}), 200
@@ -74,7 +71,7 @@ def add_permission(role_id):
 
     if permission not in role.permissions:
         role.permissions.append(permission)
-        role.permissions = list(set(role.permissions))  # Remove duplicates
+        role.permissions = list(set(role.permissions)) 
         db.session.commit()
 
     return jsonify({"message": "Permission added", "role": role.to_dict()}), 200

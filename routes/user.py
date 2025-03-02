@@ -6,7 +6,7 @@ from schemas.user import user_schema, users_schema
 bcrypt = Bcrypt()
 user_bp = Blueprint("users", __name__)
 
-# Create a new user
+# Create a new user (Admin only)
 @user_bp.route("/create", methods=["POST"])
 def create_user():
     data = request.get_json()
@@ -16,12 +16,8 @@ def create_user():
     password = data.get("password")
     role_id = data.get("role_id")
 
-    missing_fields = [field for field in ["name", "email", "phone_number", "password", "role_id"] if not data.get(field)]
-    if missing_fields:
-      return jsonify({"error": "Missing required fields", "missing": missing_fields}), 400
-
-    # if not all([name, email, phone_number, password, role_id]):
-    #     return jsonify({"error": "All fields are required"}), 400
+    if not all([name, email, phone_number, password, role_id]):
+        return jsonify({"error": "All fields are required"}), 400
     
     existing_user = User.query.filter((User.email == email) | (User.phone_number == phone_number)).first()
     if existing_user:
@@ -40,19 +36,19 @@ def create_user():
     db.session.commit()
     return jsonify(user_schema.dump(new_user)), 201
 
-# Get all users
+# Get all users (Admin only(will update)
 @user_bp.route("/all", methods=["GET"])
 def get_users():
     users = User.query.all()
     return jsonify(users_schema.dump(users)), 200
 
-# Get a single user by ID
+# Get a single user by ID - will change to allow admin only 
 @user_bp.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
     return jsonify(user_schema.dump(user)), 200
 
-# Update user details
+# update user by ID - will change to allow admin only 
 @user_bp.route("/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -67,7 +63,7 @@ def update_user(user_id):
     db.session.commit()
     return jsonify(user_schema.dump(user)), 200
 
-# Delete a user
+# Delete a user (Admin only)
 @user_bp.route("/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
