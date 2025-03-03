@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt  
-from flask_jwt_extended import JWTManager
+# from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_cors import CORS  
 from config import Config
@@ -22,7 +22,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # Initialize other extensions
 db.init_app(app)
 ma.init_app(app)
-jwt = JWTManager(app)
+# jwt = JWTManager(app)
 migrate = Migrate(app, db)  
 
 # Register blueprints
