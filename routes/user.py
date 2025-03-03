@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from models import db, User
 from schemas.user import user_schema, users_schema
 
@@ -70,3 +71,14 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
+
+# get the user using access token 
+@user_bp.route("/protected/user", methods=["GET"])
+@jwt_required()
+def protected_user():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    if user is None:
+        return jsonify({'message': 'User not found'}), 404
+    else:
+        return jsonify(user.to_dict()), 200
