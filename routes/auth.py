@@ -18,7 +18,7 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password, password):
         return jsonify({"error": "Invalid email or password"}), 401
     
-    access_token = create_access_token(identity=str(user.id))
+    access_token = create_access_token(identity=str(user.email))
     return jsonify({"access_token": access_token, "message": "Login successful"}), 200
 
 @auth_bp.route("/reset-password", methods=["POST"])
