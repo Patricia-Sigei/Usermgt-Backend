@@ -2,6 +2,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt  
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from flask_cors import CORS  
 from config import Config
 from models import db
 from schemas import ma
@@ -15,6 +16,8 @@ app.config.from_object(Config)
 
 # initialize Bcrypt
 # bcrypt = Bcrypt(app)  
+# allowing all apps to use access the routes
+CORS(app, resources={r"/*": {"origins": "*"}})  
 
 # Initialize other extensions
 db.init_app(app)
