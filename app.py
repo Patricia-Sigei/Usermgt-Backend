@@ -25,6 +25,7 @@ db.init_app(app)
 ma.init_app(app)
 jwt = JWTManager(app)
 migrate = Migrate(app, db)  
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 1209600
 
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix="/users")
