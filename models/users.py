@@ -14,6 +14,8 @@ class User(db.Model):
 
     # Relationship with role_id model
     role = db.relationship("Role", back_populates="users")
+    scanned = db.relationship("Scanned", back_populates="user", cascade="all, delete-orphan")
+    orders = db.relationship("Orders", back_populates="user", cascade="all, delete-orphan", lazy=True)
 # regex to validate password
     @validates("password")
     def validate_password(self, key, password):
@@ -28,6 +30,7 @@ class User(db.Model):
             raise ValueError("Password must contain at least one special character.")
 
         return password  
+    
     # validates the email using regex
     @validates("email")
     def validate_email(self, key, email):
@@ -56,5 +59,4 @@ from .scanned import Scanned
 from .orders import Orders  
 
 # Defining relationships at the bottom to avoid dependencies (circular imports- putting user. makes it recognize that scanned is part of the user relationship)
-User.scanned = db.relationship("Scanned", back_populates="user", cascade="all, delete-orphan")
-User.orders = db.relationship("Orders", back_populates="user", cascade="all, delete-orphan", lazy=True)
+
