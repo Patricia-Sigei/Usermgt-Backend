@@ -1,6 +1,8 @@
 from models import db
-from models.permissions import role_permissions  
+from .permissions import role_permissions  
 from sqlalchemy.orm import relationship
+
+
 
 
 class Role(db.Model):
@@ -11,11 +13,14 @@ class Role(db.Model):
 
     # Many-to-Many relationship with permissions
     permissions = db.relationship("Permission", secondary=role_permissions, back_populates="roles")
+    users = relationship("User", back_populates="role") 
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
-            "permissions": [perm.to_dict() for perm in self.permissions]
+            "permissions": [perm.to_dict() for perm in self.permissions],
+            # "users": [user.to_dict() for user in self.users] 
+            
         }
-    user = relationship("User", back_populates="role") 
+   

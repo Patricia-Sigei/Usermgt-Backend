@@ -1,5 +1,5 @@
 from models import db
-from .role import Role
+
 
 class User(db.Model):
     __tablename__ = "user"
@@ -12,7 +12,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
 
     # Relationship with role_id model
-    role = db.relationship("Role", back_populates="user")
+    role = db.relationship("Role", back_populates="users")
 
     def __repr__(self):
         return f"<User {self.name}>"
@@ -29,6 +29,7 @@ class User(db.Model):
         }
 
 # Import Scanned and Orders ..avoids circular imports where they are dependent on each other
+
 from .scanned import Scanned
 from .orders import Orders  
 

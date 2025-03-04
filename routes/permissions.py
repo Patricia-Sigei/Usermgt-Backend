@@ -29,7 +29,7 @@ def get_permissions():
     return jsonify([perm.to_dict() for perm in permissions]), 200
 
 # Get a single permission by ID
-@permission_bp.route("/permissions/<int:permission_id>", methods=["GET"])
+@permission_bp.route("/<int:permission_id>", methods=["GET"])
 def get_permission(permission_id):
     permission = Permission.query.get(permission_id)
     if not permission:
@@ -37,7 +37,7 @@ def get_permission(permission_id):
     return jsonify(permission.to_dict()), 200
 
 # Update a permission
-@permission_bp.route("/permissions/<int:permission_id>", methods=["PUT"])
+@permission_bp.route("/<int:permission_id>", methods=["PUT"])
 def update_permission(permission_id):
     permission = Permission.query.get(permission_id)
     if not permission:
