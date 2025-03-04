@@ -21,8 +21,7 @@ class Orders(db.Model):
     reason = db.Column(db.String(50), nullable=True)
     initialiser = db.Column(db.String(50), nullable=True)
 
-    users = db.relationship('User', back_populates='orders')
-
+   
     def to_dict(self):
         return {
             "id": self.id,
@@ -45,3 +44,5 @@ class Orders(db.Model):
 
     def __repr__(self):
         return f'<Order {self.id}: {self.order_name}>'
+    
+    user = db.relationship('User', back_populates='orders')

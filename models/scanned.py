@@ -1,7 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
-
+from models import db
+from .users import User
 class Scanned(db.Model):
     __tablename__ = 'scanned'  
 
@@ -11,8 +9,9 @@ class Scanned(db.Model):
     status = db.Column(db.String(80), default='pending', nullable=False)
     scanned_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
+    
+    def __repr__(self):  
+        return f'<Scanned {self.id}>'
     # Define relationship
     user = db.relationship("User", back_populates="scanned")
 
-    def __repr__(self):  
-        return f'<Scanned {self.id}>'
