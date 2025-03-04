@@ -9,6 +9,7 @@ from schemas import ma
 from routes.user import user_bp
 from routes.auth import auth_bp
 from routes.role import role_bp
+from routes.permissions import permission_bp
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -29,6 +30,7 @@ migrate = Migrate(app, db)
 app.register_blueprint(user_bp, url_prefix="/users")
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(role_bp, url_prefix="/roles")
+app.register_blueprint(permission_bp, url_prefix="/permissions")
 
 # Create tables using Flask-Migrate
 with app.app_context():

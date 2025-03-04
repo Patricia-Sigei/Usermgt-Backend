@@ -12,6 +12,6 @@ class Scanned(db.Model):
     
     def __repr__(self):  
         return f'<Scanned {self.id}>'
-    # Define relationship
+    # Define relationship--- here to avoid circular imports
     user = db.relationship("User", back_populates="scanned")
 

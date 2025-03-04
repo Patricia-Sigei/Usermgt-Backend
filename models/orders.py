@@ -44,5 +44,5 @@ class Orders(db.Model):
 
     def __repr__(self):
         return f'<Order {self.id}: {self.order_name}>'
-    
+    # import here to avoid circular imports
     user = db.relationship('User', back_populates='orders')

@@ -12,7 +12,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
 
     # Relationship with role_id model
-    role = db.relationship("Role", back_populates="users")
+    role = db.relationship("Role", back_populates="user")
 
     def __repr__(self):
         return f"<User {self.name}>"
