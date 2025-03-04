@@ -33,6 +33,6 @@ class User(db.Model):
 from .scanned import Scanned
 from .orders import Orders  
 
-# Now define relationships at the bottom 
+# Defining relationships at the bottom to avoid dependencies (circular imports- putting user. makes it recognize that scanned is part of the user relationship)
 User.scanned = db.relationship("Scanned", back_populates="user", cascade="all, delete-orphan")
 User.orders = db.relationship("Orders", back_populates="user", cascade="all, delete-orphan", lazy=True)

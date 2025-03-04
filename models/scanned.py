@@ -9,6 +9,15 @@ class Scanned(db.Model):
     status = db.Column(db.String(80), default='pending', nullable=False)
     scanned_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "status": self.status,
+            "scanned_at": self.scanned_at
+        }
+
     
     def __repr__(self):  
         return f'<Scanned {self.id}>'
