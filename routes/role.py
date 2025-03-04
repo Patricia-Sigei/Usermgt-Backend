@@ -69,7 +69,7 @@ def delete_role(role_id):
     return jsonify({"message": "Role deleted successfully"}), 200
 
 # Assign additional permissions to a role
-@role_bp.route("/roles/<int:role_id>/assign_permissions", methods=["POST"])
+@role_bp.route("/<int:role_id>/assign_permissions", methods=["POST"])
 def assign_permissions(role_id):
     role = Role.query.get(role_id)
     if not role:
