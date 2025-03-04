@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models import db, User
 from flask_bcrypt import Bcrypt
 
@@ -21,8 +21,8 @@ def login():
     access_token = create_access_token(identity=str(user.email))
     return jsonify({"access_token": access_token, "message": "Login successful"}), 200
 
+# reset password using email
 @auth_bp.route("/reset-password", methods=["POST"])
-@jwt_required()
 def reset_password():
     data = request.get_json()
     email = data.get("email")
@@ -37,3 +37,4 @@ def reset_password():
     db.session.commit()
     
     return jsonify({"message": "Password reset successful"}), 200
+

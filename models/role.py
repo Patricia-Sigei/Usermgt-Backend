@@ -2,9 +2,6 @@ from models import db
 from .permissions import role_permissions  
 from sqlalchemy.orm import relationship
 
-
-
-
 class Role(db.Model):
     __tablename__ = "roles"
 
