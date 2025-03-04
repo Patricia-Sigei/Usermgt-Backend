@@ -1,10 +1,11 @@
 from models import db
+from .users import User
 
 class Orders(db.Model):
     __tablename__ = 'orders'  
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     order_name = db.Column(db.String(50), nullable=False)
     order_description = db.Column(db.String(250), nullable=False)
     name = db.Column(db.String(50), nullable=False)
@@ -20,7 +21,7 @@ class Orders(db.Model):
     reason = db.Column(db.String(50), nullable=True)
     initialiser = db.Column(db.String(50), nullable=True)
 
-    user = db.relationship('Users', back_populates='orders')
+    users = db.relationship('User', back_populates='orders')
 
     def to_dict(self):
         return {
