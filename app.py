@@ -14,6 +14,7 @@ from routes.permissions import permission_bp
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 1209600
 
 # initialize Bcrypt
 # bcrypt = Bcrypt(app)  
@@ -25,7 +26,7 @@ db.init_app(app)
 ma.init_app(app)
 jwt = JWTManager(app)
 migrate = Migrate(app, db)  
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 1209600
+
 
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix="/users")

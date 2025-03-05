@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from models import db, User
-from schemas.user import user_schema, users_schema
+# from schemas.user import user_schema, users_schema
 
 bcrypt = Bcrypt()
 user_bp = Blueprint("users", __name__)

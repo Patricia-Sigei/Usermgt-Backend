@@ -10,6 +10,7 @@ class Orders(db.Model):
     order_description = db.Column(db.String(250), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     cost = db.Column(db.Float, nullable=False)
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.id'), nullable=False)
     vat = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(50), nullable=False)
