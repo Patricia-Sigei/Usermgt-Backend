@@ -46,8 +46,8 @@ class User(db.Model):
             "email": self.email,
             "phone_number": self.phone_number,
             "role": self.role.name if self.role else None,
-            "request": [request.to_dict()for request in self.request],           
-            "orders": [order.to_dict() for order in self.orders] if hasattr(self, "orders") else [],
+            "requests": [request.to_dict() for request in self.requests] if self.requests else [],           
+            "orders": [order.to_dict() for order in self.orders] if hasattr(self, "orders") else []
         }
     
     def __repr__(self):
