@@ -38,6 +38,14 @@ class User(db.Model):
         if not re.match(email_regex, email):
             raise ValueError("Invalid email format. Please enter a valid email address.")
         return email
+    
+     # Validate phone number with regex
+    @validates("phone_number")
+    def validate_phone_number(self, key, phone_number):
+        phone_regex = r"^\d{10}$"  
+        if not re.match(phone_regex, phone_number):
+            raise ValueError("Phone number must be exactly 10 digits.")
+        return phone_number
 
     def to_dict(self):
         return {

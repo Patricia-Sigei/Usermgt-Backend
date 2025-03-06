@@ -5,7 +5,6 @@ from flask_migrate import Migrate
 from flask_cors import CORS  
 from config import Config
 from models import db
-from schemas import ma
 from routes.user import user_bp
 from routes.auth import auth_bp
 from routes.role import role_bp
@@ -23,7 +22,6 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Initialize other extensions
 db.init_app(app)
-ma.init_app(app)
 jwt = JWTManager(app)
 migrate = Migrate(app, db)  
 
