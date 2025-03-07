@@ -1,6 +1,7 @@
 from models import db
 
-# Association Table for Many-to-Many Relationship (Roles-Permissions)
+# Association Table for Many-to-Many Relationship (Roles-Permissions)---because many roles can have many permissions and vice versa
+# did not make it into a model because there are no extra columns/aspects to add to it
 role_permissions = db.Table(
     'role_permissions',
     db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True),

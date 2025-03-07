@@ -23,7 +23,7 @@ class Request(db.Model):
         }
 
     
-    def _repr_(self):  
+    def __repr__(self):  
         return f'<Scanned {self.id}>'
-    # Define relationship--- here to avoid circular imports
+    # Define relationship--- here to avoid circular imports--- the class will be already loaded before defining the relationship
     user = db.relationship("User", back_populates="requests")

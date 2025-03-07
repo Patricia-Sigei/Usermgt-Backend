@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import db
 from models.permissions import Permission
 
-permission_bp = Blueprint("permission_bp", __name__)
+permission_bp = Blueprint("permission_bp", __name__, url_prefix="/permissions")
 
 # Create a new permission
 @permission_bp.route("/create-permissions", methods=["POST"])
@@ -26,7 +26,7 @@ def create_permission():
 @permission_bp.route("/all-permissions", methods=["GET"])
 def get_permissions():
     permissions = Permission.query.all()
-    return jsonify([perm.to_dict() for perm in permissions]), 200
+    return jsonify([permission.to_dict() for permission in permissions]), 200
 
 # Get a single permission by ID
 @permission_bp.route("/<int:permission_id>", methods=["GET"])

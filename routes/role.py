@@ -3,7 +3,7 @@ from models import db
 from models.role import Role
 from models.permissions import Permission
 
-role_bp = Blueprint("role_bp", __name__)
+role_bp = Blueprint("role_bp", __name__, url_prefix="/roles")
 
 # Create a new role with assigned permissions
 @role_bp.route("/new-roles", methods=["POST"])

@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import db, User
+from models import db
+from models.users import User
 
 bcrypt = Bcrypt()
-user_bp = Blueprint("users", __name__)
+user_bp = Blueprint("users", __name__, url_prefix="/users")
 
 # Create a new user
 @user_bp.route("/create", methods=["POST"])
@@ -39,7 +40,7 @@ def create_user():
 
 # Get all users
 @user_bp.route("/all", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_users():
     users = User.query.all()
     return jsonify([user.to_dict() for user in users]), 200

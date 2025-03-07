@@ -66,5 +66,5 @@ class User(db.Model):
 from .requests import  Request
 from .orders import Orders  
 
-# Defining relationships at the bottom to avoid dependencies (circular imports- putting user. makes it recognize that scanned is part of the user relationship)
+# Defining relationships at the bottom to avoid dependencies (circular imports- putting user. makes it recognize that requests and orders are part of the user relationship)
 

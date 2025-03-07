@@ -17,7 +17,7 @@ class Role(db.Model):
             "id": self.id,
             "name": self.name,
             "permissions": [perm.to_dict() for perm in self.permissions],
-            # "users": [user.to_dict() for user in self.users] 
+            "users": [user.to_dict() for user in self.users] 
             
         }
    
