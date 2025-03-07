@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import  jwt_required, get_jwt_identity
 from models import db, User
 from schemas.user import user_schema, users_schema
 
@@ -9,7 +9,7 @@ user_bp = Blueprint("users", __name__,  url_prefix="/users")
 
 # Create a new user (Admin only)
 @user_bp.route("/create", methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def create_user():
     data = request.get_json()
     name = data.get("name")
@@ -40,42 +40,56 @@ def create_user():
 
 # Get all users (Admin only)
 @user_bp.route("/all", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_users():
     users = User.query.all()
     return jsonify(users_schema.dump(users)), 200
 
 # Get a single user by ID
 @user_bp.route("/<int:user_id>", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404  
+
     return jsonify(user_schema.dump(user)), 200
+
 
 # Update user by ID
 @user_bp.route("/<int:user_id>", methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def update_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404 
+
     data = request.get_json()
-    
+
     user.name = data.get("name", user.name)
     user.email = data.get("email", user.email)
     user.phone_number = data.get("phone_number", user.phone_number)
     user.password = bcrypt.generate_password_hash(data.get("password", user.password)).decode("utf-8")
     user.role_id = data.get("role_id", user.role_id)
-    
+
     db.session.commit()
     return jsonify(user_schema.dump(user)), 200
 
-# Delete a user (Admin only)
 @user_bp.route("/<int:user_id>", methods=["DELETE"])
-@jwt_required()
+# @jwt_required()
 def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404  
+
     db.session.delete(user)
     db.session.commit()
+
     return jsonify({"message": "User deleted successfully"}), 200
+
 
 # Get the user using access token 
 @user_bp.route("/protected/user", methods=["GET"])

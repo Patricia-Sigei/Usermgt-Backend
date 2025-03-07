@@ -36,7 +36,7 @@ def get_permission(permission_id):
         return jsonify({"error": "Permission not found"}), 404
     return jsonify(permission.to_dict()), 200
 
-# Update a permission
+# Updating a permission
 @permission_bp.route("/<int:permission_id>", methods=["PUT"])
 def update_permission(permission_id):
     permission = Permission.query.get(permission_id)
