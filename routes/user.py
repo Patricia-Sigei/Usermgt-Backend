@@ -86,4 +86,4 @@ def protected_user():
     if user is None:
         return jsonify({'message': 'User not found'}), 404
     else:
-        return jsonify(user_schema.dump(user)), 200
+        return jsonify(user.to_dict()), 200
