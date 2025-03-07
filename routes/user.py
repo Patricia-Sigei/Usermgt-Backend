@@ -9,7 +9,7 @@ user_bp = Blueprint("users", __name__, url_prefix="/users")
 
 # Create a new user
 @user_bp.route("/create", methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def create_user():
     data = request.get_json()
     name = data.get("name")
@@ -70,7 +70,7 @@ def update_user(user_id):
 
 # Delete a user
 @user_bp.route("/<int:user_id>", methods=["DELETE"])
-@jwt_required()
+# @jwt_required()
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
