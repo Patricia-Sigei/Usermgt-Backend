@@ -47,14 +47,14 @@ def get_users():
 
 # Get a single user by ID
 @user_bp.route("/<int:user_id>", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
     return jsonify(user.to_dict()), 200
 
 # Update user by ID
 @user_bp.route("/<int:user_id>", methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
     data = request.get_json()
