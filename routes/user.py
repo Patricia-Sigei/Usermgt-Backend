@@ -5,10 +5,11 @@ from models import db, User
 from schemas.user import user_schema, users_schema
 
 bcrypt = Bcrypt()
-user_bp = Blueprint("users", __name__)
+user_bp = Blueprint("users", __name__,  url_prefix="/users")
 
 # Create a new user (Admin only)
 @user_bp.route("/create", methods=["POST"])
+@jwt_required()
 def create_user():
     data = request.get_json()
     name = data.get("name")
@@ -39,18 +40,21 @@ def create_user():
 
 # Get all users (Admin only)
 @user_bp.route("/all", methods=["GET"])
+@jwt_required()
 def get_users():
     users = User.query.all()
     return jsonify(users_schema.dump(users)), 200
 
 # Get a single user by ID
 @user_bp.route("/<int:user_id>", methods=["GET"])
+@jwt_required()
 def get_user(user_id):
     user = User.query.get_or_404(user_id)
     return jsonify(user_schema.dump(user)), 200
 
 # Update user by ID
 @user_bp.route("/<int:user_id>", methods=["PUT"])
+@jwt_required()
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
     data = request.get_json()
@@ -66,13 +70,14 @@ def update_user(user_id):
 
 # Delete a user (Admin only)
 @user_bp.route("/<int:user_id>", methods=["DELETE"])
+@jwt_required()
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"}), 200
 
-# get the user using access token 
+# Get the user using access token 
 @user_bp.route("/protected/user", methods=["GET"])
 @jwt_required()
 def protected_user():
@@ -81,4 +86,4 @@ def protected_user():
     if user is None:
         return jsonify({'message': 'User not found'}), 404
     else:
-        return jsonify(user.to_dict()), 200
+        return jsonify(user_schema.dump(user)), 200

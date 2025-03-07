@@ -28,10 +28,10 @@ migrate = Migrate(app, db)
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 1209600
 
 # Register blueprints
-app.register_blueprint(user_bp, url_prefix="/users")
-app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(role_bp, url_prefix="/roles")
-app.register_blueprint(permission_bp, url_prefix="/permissions")
+app.register_blueprint(user_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(role_bp)
+app.register_blueprint(permission_bp)
 
 # Create tables using Flask-Migrate
 with app.app_context():
